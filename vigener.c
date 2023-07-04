@@ -1,50 +1,40 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include<stdio.h>
+#include<string.h>
 
-int gcd(int m, int n) {
-    int temp = m % n;
-    if (temp == 0)
-        return n;
-    m = n;
-    n = temp;
-    return gcd(m, n);
-}
-
-long power_mod(long base, long exponent, long modulus) {
-    long int result = 1;
-    while (exponent) {
-        if (exponent & 1)
-            result = (result * base) % modulus;
-        base = (base * base) % modulus;
-        exponent >>= 1;
-    }
-    return result;
-}
-
-int main() {
-    long p, q;
-    printf("Enter the prime numbers: ");
-    scanf("%ld %ld", &p, &q);
-    long m, n = p * q;
-    printf("Enter the message: ");
-    scanf("%ld", &m);
-    long phi = (p - 1) * (q - 1);
-    long e = 2;
-    while (e < phi) {
-        if (gcd(e, phi) == 1)
-            break;
-        e++;
-    }
-    long d = 2;
-    while (d < phi) {
-        if ((e * d) % phi == 1)
-            break;
-        d++;
-    } // private key
-    long enc = power_mod(m, e, n);
-    long dec = power_mod(enc, d, n);
-    printf("Encryption: %ld\n", enc);
-    printf("Decryption: %ld\n", dec);
-    return 0;
+int main()
+{
+	char msg[50];
+	char key[20];
+	printf("Enter a message:\n");
+	scanf("%s",msg);
+	printf("Enter a key:\n");
+	scanf("%s",key);
+	int msglen = strlen(msg), keylen = strlen(key), i, j;
+	char newkey[msglen], encryptedmsg[msglen], decryptedmsg[msglen];
+	for(i=0, j=0;i<msglen;i++, j++)
+	{
+		if(j == keylen)
+			j=0;
+		newkey[i] = key[j];
+	}
+	
+	newkey[i] = '\0';
+	
+	for(i=0; i < msglen; i++)
+	{
+		encryptedmsg[i] = ((msg[i] + newkey[i])%26)+'A';
+	}
+	encryptedmsg[i] = '\0';
+	
+	for(i=0; i < msglen; i++)
+	{
+		decryptedmsg[i] = (((encryptedmsg[i] - newkey[i])+26)%26)+'A';
+	}
+	decryptedmsg[i] = '\0';
+	
+	printf("Original Message: %s\n", msg);
+	printf("Key: %s\n", key);
+	printf("Generated key: %s\n", newkey);
+	printf("Encrypted Message: %s\n", encryptedmsg);
+	printf("Decrypted Message: %s\n", decryptedmsg);
 }
